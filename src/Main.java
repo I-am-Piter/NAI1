@@ -26,8 +26,6 @@ public class Main {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 
     private static Test createTest(String entry) throws WrongFormattedDataError {
@@ -51,5 +49,16 @@ public class Main {
 
         Test test = new Test(values,name);
         return test;
+    }
+
+    private static String[] getNClosestTo(Test test,int n){
+        String[] conclusionTab = new String[n];
+        tests.toArray(testsTab);
+
+
+
+        for (int i = 0; i < testsTab.length; i++) {
+            testsTab[i] = tests.get(i);
+        }
     }
 }
