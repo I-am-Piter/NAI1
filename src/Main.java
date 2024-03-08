@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class Main {
     ArrayList<Test> tests = new ArrayList<>();
     static int columnCount = 0;
-    boolean firstObject = true;
+    static boolean firstObject = true;
     public static void main(String[] args) {
         File inputFile = new File("mpp1/iris_training.txt");
         try {
@@ -24,7 +24,14 @@ public class Main {
         String[] data = entry.split("\t");
         String name = data[data.length-1];
         Double[] values = new Double[data.length-1];
-        columnCount = values.length;
+        if(firstObject){
+            columnCount = values.length;
+            firstObject = false;
+        }else{
+            if(columnCount != values.length){
+
+            }
+        }
 
         for (int i = 0; i < values.length; i++) {
             values[i] = Double.parseDouble(data[i]);
