@@ -1,6 +1,11 @@
+import javax.naming.Name;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
+import java.net.Inet4Address;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Scanner;
 
 public class Main {
@@ -26,6 +31,96 @@ public class Main {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
+
+        System.out.println("system gotowy, proszę podać K - liczbę sąsiadów");
+        Scanner uzytkownikIn = new Scanner(System.in);
+        int k = uzytkownikIn.nextInt();
+
+        boolean readTestFile = true;
+
+        System.out.println("chcesz sprawdzić dane z pliku, czy wprowadzić własne? \n Własne dane = 0, Czytanie z pliku = inna liczba");
+        readTestFile = (uzytkownikIn.nextInt() != 0);
+        if(!readTestFile){
+            System.out.println("podaj teraz "+ columnCount +" wartości, zgodnie z tym jak system był trenowany, oddziel je enterem (0.0 ; nie 0,0)");
+            double[] tmpData = new double[columnCount];
+            for (int i = 0; i < columnCount; i++) {
+                 tmpData[i] = uzytkownikIn.nextDouble();
+            }
+
+            Test testUzytkownika = new Test(tmpData,"testUzytkownika");
+
+            System.out.println(finalAnswer(getNClosestTo(testUzytkownika,k)));
+        }else{
+            int all = 0;
+            int good = 0;
+
+            inputFile = new File("mpp1/iris_test.txt");
+            String rawData;
+            Test tmpTest;
+
+            try {
+                Scanner input = new Scanner(inputFile);
+                while(input.hasNextLine()){
+                    rawData = input.nextLine();
+                    all++;
+                    tmpTest = createTest(rawData);
+                    String finalName =finalAnswer(getNClosestTo(tmpTest,k));
+                    if(finalName.equals(tmpTest.getConclusion())){
+                        good++;
+                    }
+                }
+
+                double effectivness = ((double)good/all)*100;
+                System.out.println("prawidłowo przydzielonych zostało "+good+" pozycji, tworzy to skuteczność "+effectivness+"%.");
+
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (WrongFormattedDataError e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+
+
+    }
+
+    private static String finalAnswer(Test[] testy){
+        ArrayList<String> tmplist = new ArrayList<>();
+        for (int i = 0; i < testy.length; i++) {
+            if(!tmplist.contains(testy[i].getConclusion())){
+                tmplist.add(testy[i].getConclusion());
+            }
+        }
+
+        int[] counts = new int[tmplist.size()];
+
+        String tmp;
+        int count;
+
+        for (int i = 0; i < tmplist.size(); i++) {
+            count = 1;
+            tmp = tmplist.get(i);
+            for (int j = 0; j < tmplist.size(); j++) {
+                if(i != j){
+                    if(tmp.equals(tmplist.get(j))){
+                        count++;
+                    }
+                }
+            }
+            counts[i] = count;
+        }
+
+        int highestCountIndex = 0;
+        int highestCount = Integer.MIN_VALUE;
+        for (int i = 0; i < counts.length; i++) {
+            if(counts[i]>highestCount){
+                highestCount = counts[i];
+                highestCountIndex = i;
+            }
+        }
+
+
+        return tmplist.get(highestCountIndex);
     }
 
     private static Test createTest(String entry) throws WrongFormattedDataError {
@@ -33,7 +128,7 @@ public class Main {
         entry = entry.replace(',','.');
         String[] data = entry.split("\t");
         String name = data[data.length-1];
-        Double[] values = new Double[data.length-1];
+        double[] values = new double[data.length-1];
         if(firstObject){
             columnCount = values.length;
             firstObject = false;
@@ -51,14 +146,30 @@ public class Main {
         return test;
     }
 
-    private static String[] getNClosestTo(Test test,int n){
-        String[] conclusionTab = new String[n];
-        tests.toArray(testsTab);
-
-
-
-        for (int i = 0; i < testsTab.length; i++) {
-            testsTab[i] = tests.get(i);
+    private static Test[] getNClosestTo(Test test,int n){
+        Pair[] pary = new Pair[tests.size()];
+        Test tmpTest;
+        for (int i = 0; i < pary.length; i++) {
+            tmpTest = tests.get(i);
+            pary[i] = new Pair(tmpTest.distanceFrom(test),tmpTest);
         }
+
+        Arrays.sort(pary, new Comparator<Pair>() {
+            @Override
+            public int compare(Pair o1, Pair o2) {
+                return (o1.getDistance()<o2.getDistance()?-1:(o1.getDistance()==o2.getDistance()?0:1));
+            }
+        });
+
+        Test[] nClosest = new Test[n];
+
+        for (int i = 0; i < nClosest.length; i++) {
+            nClosest[i] = pary[i].getTest();
+        }
+        for (int i = 0; i < nClosest.length; i++) {
+            System.out.println(nClosest[i]);
+        }
+
+        return nClosest;
     }
 }
