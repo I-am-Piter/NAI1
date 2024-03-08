@@ -11,15 +11,22 @@ public class Main {
         File inputFile = new File("mpp1/iris_training.txt");
         try {
             Scanner input = new Scanner(inputFile);
-            String entry = input.nextLine();
-            createTest(entry);
+            while(input.hasNextLine()) {
+                String entry = input.nextLine();
+                try {
+                    createTest(entry);
+                } catch (WrongFormattedDataError e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
 
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static Test createTest(String entry){
+    private static Test createTest(String entry) throws WrongFormattedDataError {
         entry = entry.replace(" ","");
         String[] data = entry.split("\t");
         String name = data[data.length-1];
@@ -29,7 +36,7 @@ public class Main {
             firstObject = false;
         }else{
             if(columnCount != values.length){
-
+                throw new WrongFormattedDataError("Dane są źle sformatowane, popraw je!");
             }
         }
 
