@@ -1,9 +1,11 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
-    int columnCount = 0;
+    ArrayList<Test> tests = new ArrayList<>();
+    static int columnCount = 0;
     boolean firstObject = true;
     public static void main(String[] args) {
         File inputFile = new File("mpp1/iris_training.txt");
@@ -18,15 +20,17 @@ public class Main {
     }
 
     private static Test createTest(String entry){
-        String name;
-        Double[] tab;
         entry = entry.replace(" ","");
-        int count = 0;
-
         String[] data = entry.split("\t");
-        for (String t:data) {
-            System.out.println(t);
+        String name = data[data.length-1];
+        Double[] values = new Double[data.length-1];
+        columnCount = values.length;
+
+        for (int i = 0; i < values.length; i++) {
+            values[i] = Double.parseDouble(data[i]);
         }
-        return null;
+
+        Test test = new Test(values,name);
+        return test;
     }
 }
