@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
-    ArrayList<Test> tests = new ArrayList<>();
+    static ArrayList<Test> tests = new ArrayList<>();
     static int columnCount = 0;
     static boolean firstObject = true;
     public static void main(String[] args) {
@@ -14,20 +14,25 @@ public class Main {
             while(input.hasNextLine()) {
                 String entry = input.nextLine();
                 try {
-                    createTest(entry);
+                    tests.add(createTest(entry));
                 } catch (WrongFormattedDataError e) {
                     throw new RuntimeException(e);
                 }
             }
-
+            for(Test t:tests){
+                System.out.println(t);
+            }
 
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
+
+
     }
 
     private static Test createTest(String entry) throws WrongFormattedDataError {
         entry = entry.replace(" ","");
+        entry = entry.replace(',','.');
         String[] data = entry.split("\t");
         String name = data[data.length-1];
         Double[] values = new Double[data.length-1];
