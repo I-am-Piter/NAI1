@@ -9,6 +9,8 @@ import java.util.Comparator;
 import java.util.Scanner;
 
 public class Main {
+    //W tej chwili skuteczność algorytmu jest bardzo wysoka na podanych danych, wynika to z tego,
+    //że tablica testów która dochodzi do metody finalAnswer jest posortowana w kolejności niemalejącej po odległości.
     static ArrayList<Test> tests = new ArrayList<>();
     static int columnCount = 0;
     static boolean firstObject = true;
@@ -98,13 +100,11 @@ public class Main {
         int count;
 
         for (int i = 0; i < tmplist.size(); i++) {
-            count = 1;
+            count = 0;
             tmp = tmplist.get(i);
-            for (int j = 0; j < tmplist.size(); j++) {
-                if(i != j){
-                    if(tmp.equals(tmplist.get(j))){
-                        count++;
-                    }
+            for (int j = 0; j < testy.length; j++) {
+                if(tmp.equals(testy[j].getConclusion())){
+                    count++;
                 }
             }
             counts[i] = count;
@@ -165,9 +165,6 @@ public class Main {
 
         for (int i = 0; i < nClosest.length; i++) {
             nClosest[i] = pary[i].getTest();
-        }
-        for (int i = 0; i < nClosest.length; i++) {
-            System.out.println(nClosest[i]);
         }
 
         return nClosest;
