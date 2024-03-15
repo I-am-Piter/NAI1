@@ -119,6 +119,10 @@ public class Main {
             }
         }
 
+        for (int i = 0; i < tmplist.size(); i++) {
+            System.out.println(tmplist.get(i) + "'s count: " + counts[i]);
+        }
+
 
         return tmplist.get(highestCountIndex);
     }
